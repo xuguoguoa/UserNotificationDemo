@@ -12,7 +12,6 @@
 
 @interface AppDelegate ()
 
-@property (nonatomic,assign) int pushCount;
 
 @end
 
@@ -21,7 +20,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  self.pushCount = 0;
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   ViewController *homeVC = [[ViewController alloc] init];
   UINavigationController *NVC = [[UINavigationController alloc] initWithRootViewController:homeVC];

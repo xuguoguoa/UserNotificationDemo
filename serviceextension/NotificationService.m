@@ -20,12 +20,11 @@
 
 - (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler
 {
-  NSLog(@"%@",@"langligelang+++++++++++++++++++++S");
-    self.contentHandler = contentHandler;
-    self.bestAttemptContent = [request.content mutableCopy];
-    
-    // Modify the notification content here...
-    self.bestAttemptContent.title = [NSString stringWithFormat:@"%@ [xucpppppp]", self.bestAttemptContent.title];
+  self.contentHandler = contentHandler;
+  self.bestAttemptContent = [request.content mutableCopy];
+  
+  // Modify the notification content here...
+  self.bestAttemptContent.title = [NSString stringWithFormat:@"%@ [xucpppppp]", self.bestAttemptContent.title];
   NSDictionary *apsDic = [request.content.userInfo objectForKey:@"aps"];
   NSString *attachUrl = [apsDic objectForKey:@"image"];
   NSLog(@"%@",attachUrl);
@@ -68,8 +67,25 @@
     }
     self.contentHandler(self.bestAttemptContent);
   }];
-  [downloadTask resume];
 
+//  NSMutableArray *identifierAry = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults]objectForKey:@"remoteIdentifiers"]];
+//  if(!identifierAry)
+//  {
+//    identifierAry = [[NSMutableArray alloc]initWithCapacity:0];
+//  }
+//  [identifierAry addObject:request.identifier];
+//  [[NSUserDefaults standardUserDefaults] setObject:identifierAry forKey:@"remoteIdentifiers"];
+//  if(identifierAry.count > 1)
+//  {
+//    //取消上一条通知
+//    NSString *lastidentifier = [identifierAry objectAtIndex:0];
+//    [identifierAry removeObjectAtIndex:0];
+//    [[NSUserDefaults standardUserDefaults] setObject:identifierAry forKey:@"remoteIdentifiers"];
+//    [[UNUserNotificationCenter currentNotificationCenter] removeDeliveredNotificationsWithIdentifiers:@[lastidentifier]];
+//  }
+  //取消所有的已发送通知
+  [[UNUserNotificationCenter currentNotificationCenter]removeAllDeliveredNotifications];
+   [downloadTask resume];
 }
 
 - (void)serviceExtensionTimeWillExpire {
