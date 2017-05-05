@@ -44,9 +44,9 @@
   UNTimeIntervalNotificationTrigger *trigger1 = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval repeats:NO];
   //添加category
   //设置category
-  //UNNotificationActionOptionAuthenticationRequired 需要解锁
-  //UNNotificationActionOptionDestructive  显示为红色
-  //UNNotificationActionOptionForeground   点击打开app
+  //UNNotificationActionOptionAuthenticationRequired  执行前需要解锁确认
+  //UNNotificationActionOptionDestructive  显示高亮（红色）
+  //UNNotificationActionOptionForeground   将会引起程序启动到前台
   
   UNNotificationAction *action1 = [UNNotificationAction actionWithIdentifier:@"action1" title:@"点击打开app" options:UNNotificationActionOptionForeground];
   

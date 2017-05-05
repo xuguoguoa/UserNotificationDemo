@@ -27,21 +27,52 @@
   
   self.window.backgroundColor = [UIColor whiteColor];
   [self.window makeKeyAndVisible];
-  //注册本地推送
+
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
   //获取当前的通知设置
   [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
     NSLog(@"%@",settings);
-  }];
-  //请求推送权限
-  [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-    if (!error) {
-      NSLog(@"request authorization succeeded!");
+    if(settings.authorizationStatus == UNAuthorizationStatusNotDetermined)
+    {
+      //请求推送权限
+      [center requestAuthorizationWithOptions:(UNAuthorizationOptionBadge | UNAuthorizationOptionSound | UNAuthorizationOptionAlert) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        if (!error) {
+          NSLog(@"request authorization succeeded!");
+          //注册远程推送，才能获取到device token
+          [[UIApplication sharedApplication] registerForRemoteNotifications];
+        }
+      }];
+    }
+    else if(settings.authorizationStatus == UNAuthorizationStatusDenied)
+    {
+      UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil  message:@"允许发送通知" preferredStyle:UIAlertControllerStyleAlert];
+      UIAlertAction *alertAction1 = [UIAlertAction actionWithTitle:@"再说吧" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+      }];
+      UIAlertAction *alertAction2 = [UIAlertAction actionWithTitle:@"去设置" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        //异步执行open操作和主线程执行回调
+        if([application respondsToSelector:@selector(openURL:options:completionHandler:)])
+        {
+          [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:^(BOOL success) {
+            
+          }];
+        }
+        else
+        {
+          [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+        }
+      }];
+      [alertController addAction:alertAction1];
+      [alertController addAction:alertAction2];
+      [self.window.rootViewController presentViewController:alertController animated:YES completion:^{
+        
+      }];
+      
     }
   }];
-  //注册远程推送
-  [[UIApplication sharedApplication] registerForRemoteNotifications];
+  
+  
     return YES;
 }
 
@@ -54,7 +85,7 @@
   
 }
 
-//点击推送消息或者点击action的回调
+//点击推送消息或者点击推送消息的action进行的回调
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler
 {
   NSLog(@"Userinfo %@",response.notification.request.content.userInfo);
